@@ -12,11 +12,18 @@ def initialize_session_state():
         st.session_state.messages = [
             {"role": "assistant", "content": "Good morning Anna. How did you sleep last night?"}
         ]
-    # if "audio_initialized" not in st.session_state:
-    #     st.session_state.audio_initialized = False
+    if "current_step_idx" not in st.session_state:
+        st.session_state.current_step_idx = 0
+    if "audio_played" not in st.session_state:
+        st.session_state.audio_played = False
 
 initialize_session_state()
 
+if not st.session_state.audio_played:
+    first_message = st.session_state.messages[0]["content"]
+    audio_path = text_to_speech(first_message)
+    autoplay_audio(audio_path)
+    st.session_state.audio_played = True
 
 st.title("StepSense")
 
@@ -47,6 +54,7 @@ if audio_bytes:
             st.session_state.messages.append({"role": "user", "content": transcript})
             with st.chat_message("user"):
                 st.write(transcript)
+            # Do not progress to next step automatically
             os.remove(webm_file_path)
 
 
@@ -70,12 +78,10 @@ routine_steps = [
     "take medication"
 ]
 current_step = routine_steps[st.session_state.current_step_idx]
-st.subheader(f"Current Task: {current_step}")
 
 if st.button("I did it!"):
-    # Generate AI response
-    response = get_answer(st.session_state.messages, step=current_step)
     st.session_state.messages.append({"role": "user", "content": f"I finished: {current_step}"})
+    response = get_answer(st.session_state.messages, step=current_step)
     st.session_state.messages.append({"role": "assistant", "content": response})
 
     # Play voice
@@ -87,7 +93,3 @@ if st.button("I did it!"):
         st.session_state.current_step_idx += 1
     else:
         st.success("You've completed your whole routine! 🎉")
-
-if st.session_state.messages:
-    st.markdown("### Encouragement")
-    st.markdown(st.session_state.messages[-1]["content"])
