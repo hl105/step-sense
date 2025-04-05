@@ -7,12 +7,10 @@ from streamlit_float import *
 # Float feature initialization
 float_init() 
 
-
-
 def initialize_session_state():
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "Good morning! Nice to meet you! What is your name?"}
+            {"role": "assistant", "content": "Good morning Anna. How did you sleep last night?"}
         ]
     # if "audio_initialized" not in st.session_state:
     #     st.session_state.audio_initialized = False
@@ -20,7 +18,7 @@ def initialize_session_state():
 initialize_session_state()
 
 
-st.title("This is StepSense")
+st.title("StepSense")
 
 
 # Create footer container for the microphone
@@ -53,7 +51,7 @@ if audio_bytes:
 
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
-        with st.spinner("Thinking🤔..."):
+        with st.spinner("Thinking 🤔..."):
             final_response = get_answer(st.session_state.messages)
         with st.spinner("Generating audio response..."):    
             audio_file = text_to_speech(final_response)
