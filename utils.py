@@ -1,14 +1,14 @@
 from openai import OpenAI
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import base64
 import streamlit as st
 from pydub import AudioSegment
 
-# load_dotenv()
-# api_key = os.getenv("openai_api_key")
+load_dotenv()
+api_key = os.getenv("openai_api_key")
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=api_key)
 
 """
 def get_answer(messages):
