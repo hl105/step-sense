@@ -6,7 +6,7 @@ import streamlit as st
 from pydub import AudioSegment
 
 load_dotenv()
-api_key = os.getenv("openai_api_key")
+api_key = os.getenv("OPENAI_API_KEY")
 
 client = OpenAI(api_key=api_key)
 
