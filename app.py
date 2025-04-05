@@ -49,9 +49,10 @@ if audio_bytes:
                 st.write(transcript)
             os.remove(webm_file_path)
 
+
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
-        with st.spinner("Thinking 🤔..."):
+        with st.spinner("..."):
             final_response = get_answer(st.session_state.messages)
         with st.spinner("Generating audio response..."):    
             audio_file = text_to_speech(final_response)
@@ -62,3 +63,31 @@ if st.session_state.messages[-1]["role"] != "assistant":
 
 # Float the footer container and provide CSS to target it with
 footer_container.float("bottom: 0rem;")
+
+routine_steps = [
+    "get out of bed",
+    "brush your teeth",
+    "take medication"
+]
+current_step = routine_steps[st.session_state.current_step_idx]
+st.subheader(f"Current Task: {current_step}")
+
+if st.button("I did it!"):
+    # Generate AI response
+    response = get_answer(st.session_state.messages, step=current_step)
+    st.session_state.messages.append({"role": "user", "content": f"I finished: {current_step}"})
+    st.session_state.messages.append({"role": "assistant", "content": response})
+
+    # Play voice
+    audio_path = text_to_speech(response)
+    autoplay_audio(audio_path)
+
+    # Move to the next step
+    if st.session_state.current_step_idx < len(routine_steps) - 1:
+        st.session_state.current_step_idx += 1
+    else:
+        st.success("You've completed your whole routine! 🎉")
+
+if st.session_state.messages:
+    st.markdown("### Encouragement")
+    st.markdown(st.session_state.messages[-1]["content"])

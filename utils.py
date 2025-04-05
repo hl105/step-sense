@@ -24,10 +24,8 @@ def get_answer(messages):
 def get_answer(messages, step=None, personality="gentle friend"):
     step_instructions = {
         "get out of bed": "The user just woke up and tapped the sensor near their bed. Motivate them to get out of bed.",
-        "go to the bathroom": "The user got out of bed and is heading to the bathroom. Encourage them gently to move there.",
         "brush your teeth": "The user has arrived in the bathroom. Encourage them to brush their teeth.",
-        "go to the kitchen": "The user finished brushing. Prompt them to head to the kitchen.",
-        "drink some water": "The user is in the kitchen. Remind and motivate them to drink some water."
+        "take medication": "The user finished brushing. Prompt them to head to the kitchen to take their morning medication.",
     }
 
     step_context = step_instructions.get(step, "Help the user continue their morning routine with encouragement.")
@@ -35,7 +33,8 @@ def get_answer(messages, step=None, personality="gentle friend"):
     system_message = [{
         "role": "system",
         "content": (
-            f"You are a {personality} helping someone with depression or executive dysfunction complete their morning tasks. "
+            f"You are a {personality} helping someone with depression or executive dysfunction complete their morning tasks in this exact order:"
+            f"This is the user's routine for the day {step_instructions}"
             f"{step_context} Speak in a warm, supportive, non-judgmental tone. Be brief, friendly, and motivating."
         )
     }]
@@ -80,3 +79,10 @@ def autoplay_audio(file_path: str):
     </audio>
     """
     st.markdown(md, unsafe_allow_html=True)
+
+if "current_step_idx" not in st.session_state:
+    st.session_state.current_step_idx = 0
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
